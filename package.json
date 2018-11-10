@@ -1,0 +1,18 @@
+{
+  "name": "meta-git",
+  "version": "1.0.0",
+  "description": "Create a branch with a /meta/.git folder reflecting the .git folder of the actual project, set up in a way so that people can use \"dumb\" http to fork the repo if you host it on github using github pages.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "js-git": "^0.7.8"
+  },
+  "bin": {
+    "meta-git": "./bin/meta-git",
+    "git-branch-serve": "./bin/git-branch-serve"
+  }
+}

@@ -1,0 +1,23 @@
+#!/usr/bin/env node
+
+// Verify that you got required number of arguments
+if(process.argv.length < 3) {
+	console.log('Usage: git branch-serve branch-name');
+	process.exit();
+}
+
+// Verify that you're in a git-repo
+const fs = require('fs');
+if(!fs.existsSync('./.git/')) {
+	console.log('Current folder is not a git repo');
+	process.exit();
+}
+
+const branch_name = process.argv[2];
+// Check if branch exists
+// Check if commit exists
+// Check if tree exists
+
+console.log(`Serving branch '${branch_name}'`);
+
+// Start express server
