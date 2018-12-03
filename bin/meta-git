@@ -20,7 +20,6 @@ const meta_branch_name = process.argv[2];
 console.log(`Gennerating branch '${meta_branch_name}'`);
 
 // Setup js-git
-const modes = require('js-git/lib/modes');
 let repo = {};
 require('js-git/mixins/mem-db')(repo);
 require('js-git/mixins/create-tree')(repo);
