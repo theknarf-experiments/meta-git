@@ -6,5 +6,4 @@ if(process.argv.length < 3) {
 	process.exit();
 }
 
-require('@babel/register');
-require('../src/branch-serve');
+require('../lib/branch-serve');

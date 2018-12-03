@@ -62,6 +62,12 @@ repo.loadAs('commit', commit_hash, (err, commit) => {
 			if(path.charAt(0) == '/')
 				path = path.substring(1);
 
+			// Default resolve
+			if(path == "")
+				path = 'index.html';
+
+			console.log(`Request for file ${path}`);
+
 			if(tree.hasOwnProperty(path)) {
 				repo.loadAs('blob', tree[path].hash, (err, blob) => {
 					if(err) {
@@ -70,7 +76,11 @@ repo.loadAs('commit', commit_hash, (err, commit) => {
 						return;
 					}
 
-					res.send(blob);
+					if(path.match(/\.html$/))
+						res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+
+					res.setHeader('Content-Length', Buffer.byteLength(blob));
+					res.end(blob);
 				});
 			} else {
 				next();
