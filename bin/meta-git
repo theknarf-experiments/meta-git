@@ -8,24 +8,4 @@ if(process.argv.length < 3) {
 	process.exit();
 }
 
-// Verify that you're in a git-repo
-const fs = require('fs');
-if(!fs.existsSync('./.git/')) {
-	console.log('Current folder is not a git repo');
-	process.exit();
-}
-
-// Get meta-repo branch name
-const meta_branch_name = process.argv[2];
-console.log(`Gennerating branch '${meta_branch_name}'`);
-
-// Setup js-git
-let repo = {};
-require('js-git/mixins/mem-db')(repo);
-require('js-git/mixins/create-tree')(repo);
-require('js-git/mixins/pack-ops')(repo);
-require('js-git/mixins/walkers')(repo);
-require('js-git/mixins/read-combiner')(repo);
-require('js-git/mixins/formats')(repo);
-
-
+require('../lib/meta');
