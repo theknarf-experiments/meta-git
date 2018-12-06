@@ -20,7 +20,6 @@ function express_middleware(req, res, next) {
 	}
 
 	// Check if commit exists
-	//  PS. we need to parse the repo first, as the commit might be an object or in a pack-file
 	repo.loadAs('commit', commit_hash, (err, commit) => {
 		if(err) {
 			console.log('error reading commit', err);
@@ -30,7 +29,7 @@ function express_middleware(req, res, next) {
 		// Check if tree exists
 		repo.loadAs('tree', commit.tree, (err, tree) => {
 			if(err) {
-				console.log('error reading commit', err);
+				console.log('error reading tree', err);
 				process.exit();
 			}
 
@@ -62,6 +61,7 @@ function express_middleware(req, res, next) {
 					res.end(blob);
 				});
 			} else {
+				console.log(`Couldn't find ${path}`, tree);
 				next();
 			}
 

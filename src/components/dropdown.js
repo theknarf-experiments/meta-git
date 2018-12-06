@@ -11,6 +11,7 @@ const Dropdown = ({children, label}) =>
 				position: relative;
 				background: white;
 				min-width: 150px;
+				z-index: 100;
 			}
 			.dropdown span {
 				-webkit-touch-callout: none; /* iOS Safari */
