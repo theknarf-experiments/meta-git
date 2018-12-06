@@ -19,10 +19,6 @@ function express_middleware(req, res, next) {
 		process.exit();
 	}
 
-	// TODO: I might need to run something to unpack?
-	// TODO: Support recursivly resolving tree's
-	// TODO: reload the branch / comitt / tree every time, aka some kind of --watch mode
-
 	// Check if commit exists
 	//  PS. we need to parse the repo first, as the commit might be an object or in a pack-file
 	repo.loadAs('commit', commit_hash, (err, commit) => {

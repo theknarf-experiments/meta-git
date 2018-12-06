@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.4",
+    "git-node-fs": "^1.0.0",
     "isomorphic-jsx": "^0.2.0",
     "js-git": "^0.7.8"
   },

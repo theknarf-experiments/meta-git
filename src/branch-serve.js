@@ -26,10 +26,6 @@ if(commit_hash == "") {
 	process.exit();
 }
 
-// TODO: I might need to run something to unpack?
-// TODO: Support recursivly resolving tree's
-// TODO: reload the branch / comitt / tree every time, aka some kind of --watch mode
-
 // Check if commit exists
 //  PS. we need to parse the repo first, as the commit might be an object or in a pack-file
 repo.loadAs('commit', commit_hash, (err, commit) => {
@@ -41,7 +37,7 @@ repo.loadAs('commit', commit_hash, (err, commit) => {
 	// Check if tree exists
 	repo.loadAs('tree', commit.tree, (err, tree) => {
 		if(err) {
-			console.log('error reading commit', err);
+			console.log('error reading tree', err);
 			process.exit();
 		}
 
