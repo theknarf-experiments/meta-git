@@ -44,7 +44,9 @@ const index_page =
 				)}
 			</Dropdown>
 		</div>
-		<iframe name="content" src="dummy.html" frameBorder="0"> </iframe>
+		<iframe width="100%" name="content" src="dummy.html" frameBorder="0" onload={`
+			this.style.height = this.contentWindow.document.body.scrollHeight + 'px';
+		`}> </iframe>
 	</Page>;
 
 const dummy_page =
@@ -109,8 +111,22 @@ const saveTree = (tree) => {
 	})
 };
 
-const Tree = ({ tree }) =>
-	<div> TODO </div>;
+const Tree = ({ tree }) => {
+	return <div class="files">
+		<style>{`
+			.files {
+				border: 1px solid #ddd; 
+				margin: 25px 50px;
+			}
+			.file {
+				padding: 4px 56px;
+				margin: 2px 0;
+				border-bottom: 1px solid #ddd;
+			}
+		`}</style>
+		{ Object.keys(tree).map( file => <div class="file"> {file} </div> ) }
+	</div>;
+}
 
 // Gennerate file view from tree for branch
 Promise
