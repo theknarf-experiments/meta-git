@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "babel src -d lib",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+	 "build:gh-pages": "npm run build && ./bin/meta-git gh-pages"
   },
   "author": "",
   "license": "ISC",

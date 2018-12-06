@@ -1,5 +1,6 @@
 import { dom } from 'isomorphic-jsx';
 import fs from 'fs';
+import path from 'path';
 import repo from './setup-js-git';
 
 // This provides symbolic names for the octal modes used by git trees.
@@ -14,22 +15,54 @@ if(!fs.existsSync('./.git/')) {
 	process.exit();
 }
 
+const head_folder = './.git/refs/heads/',
+		heads = fs.readdirSync(head_folder);
+
 // Get meta-repo branch name
 const branch_name = process.argv[2],
-		branch_file = `./.git/refs/heads/${branch_name}`;
+		branch_file = `${head_folder}${branch_name}`;
 
 console.log(`Gennerating branch '${branch_name}'`);
 
-const index_page = '<!DOCTYPE html>' +
+const Page = ({children}) => '<!DOCTYPE html>' +
 	<html>
 		<head>
 
 		</head>
 		<body>
-			<h1> index </h1>
+			{children}
 		</body>
 	</html>;
 
+const Dropdown = ({children, selected, id}) =>
+	<div class="dropdown">
+		<span class="selected">{ selected }</span>
+		<input type="checkbox" onClick={`
+			var style = window.event.target.checked ? 'display: block' : 'display: none';
+			document.getElementById('${id}').style = style;
+		`} />
+		<div id={id} style={{ display: 'none' }}>
+			{children}
+		</div>
+	</div>;
+
+const index_page =
+	<Page>
+		<h1> {path.basename(process.cwd())} </h1>
+		<div class="branch">
+			<Dropdown selected={heads[0]} id="branch-dropdown">
+				{heads.map(head =>
+					<div><a href="#"> {head} </a></div>
+				)}
+			</Dropdown>
+		</div>
+		<div class="filelist">
+
+		</div>
+		<div class="readme">
+
+		</div>
+	</Page>;
 
 repo.saveAs('blob', Buffer.from(index_page, 'utf8'), (err, blobHash) => {
 	if(err) throw err;
