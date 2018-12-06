@@ -2,6 +2,7 @@ import { dom } from 'isomorphic-jsx';
 import fs from 'fs';
 import path from 'path';
 import repo from './setup-js-git';
+import Dropdown from './components/dropdown.js';
 
 // This provides symbolic names for the octal modes used by git trees.
 import modes from 'js-git/lib/modes';
@@ -34,23 +35,11 @@ const Page = ({children}) => '<!DOCTYPE html>' +
 		</body>
 	</html>;
 
-const Dropdown = ({children, selected, id}) =>
-	<div class="dropdown">
-		<span class="selected">{ selected }</span>
-		<input type="checkbox" onClick={`
-			var style = window.event.target.checked ? 'display: block' : 'display: none';
-			document.getElementById('${id}').style = style;
-		`} />
-		<div id={id} style={{ display: 'none' }}>
-			{children}
-		</div>
-	</div>;
-
 const index_page =
 	<Page>
 		<h1> {path.basename(process.cwd())} </h1>
 		<div class="branch">
-			<Dropdown selected={heads[0]} id="branch-dropdown">
+			<Dropdown label="Switch branch">
 				{heads.map(head =>
 					<div><a href="#"> {head} </a></div>
 				)}
