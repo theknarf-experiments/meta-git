@@ -42,8 +42,20 @@ const Dropdown = ({children, label}) =>
 			section a {
 				color: white;
 			}
+			.down.icon {
+				color: #000;
+				position: absolute;
+				margin-left: 10px;
+				margin-top: -0.2em;
+				width: 1em;
+				height: 1em;
+				border-bottom: solid 1px currentColor;
+				border-left: solid 1px currentColor;
+				-webkit-transform: rotate(-45deg);
+				transform: rotate(-45deg);
+			}
 		`}</style>
-		<span>{ label||"Unnamed" }</span>
+		<span>{ label||"Unnamed" }<span class="down icon" /></span>
 		<input type="checkbox" />
 		<section>
 			{children}
