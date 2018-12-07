@@ -3,6 +3,8 @@ import fs from 'fs';
 import path from 'path';
 import repo from './setup-js-git';
 import Dropdown from './components/dropdown.js';
+import remark from 'remark';
+import html from 'remark-html';
 
 // This provides symbolic names for the octal modes used by git trees.
 import modes from 'js-git/lib/modes';
@@ -27,7 +29,15 @@ console.log(`Gennerating branch '${branch_name}'`);
 const Page = ({children}) => '<!DOCTYPE html>' +
 	<html>
 		<head>
+			<style>{`
+				header, .branch, .files, .readme {
+					margin: 25px;
+				}
 
+				.files {
+					border: 1px solid #ddd;
+				}
+			`}</style>
 		</head>
 		<body>
 			{children}
@@ -36,7 +46,9 @@ const Page = ({children}) => '<!DOCTYPE html>' +
 
 const index_page =
 	<Page>
-		<h1> {path.basename(process.cwd())} </h1>
+		<header>
+			<h1> {path.basename(process.cwd())} </h1>
+		</header>
 		<div class="branch">
 			<Dropdown label="Switch branch">
 				{heads.map(head =>
@@ -44,27 +56,21 @@ const index_page =
 				)}
 			</Dropdown>
 		</div>
-		<iframe width="100%" name="content" src="dummy.html" frameBorder="0" onload={`
+		<iframe width="100%" name="content" src="master.html" frameBorder="0" onload={`
 			this.style.height = this.contentWindow.document.body.scrollHeight + 'px';
 		`}> </iframe>
 	</Page>;
 
-const dummy_page =
-	<Page>
-		Dummy page
-	</Page>
-
 const tree = {}
-const promises = [];
 
 function savefile(filename, file) {
-	promises.push(new Promise((resolve, reject) => {
+	return new Promise((resolve, reject) => {
 		repo.saveAs('blob', Buffer.from(file, 'utf8'), (err, blobHash) => {
 			if(err) return reject(err);
 			tree[filename] = { mode: modes.file, hash: blobHash };
 			resolve();
 		});
-	}));
+	});
 }
 
 const loadTreeFromBranch = ( branch_name ) => {
@@ -106,6 +112,7 @@ const saveTree = (tree) => {
 
 			fs.writeFile(branch_file, Buffer.from(hash, 'utf8'), (err) => {
 				if(err) throw err;
+				console.log(`Updated branch ${branch_name} with hash ${hash}`);
 			});
 		});
 	})
@@ -114,30 +121,54 @@ const saveTree = (tree) => {
 const Tree = ({ tree }) => {
 	return <div class="files">
 		<style>{`
-			.files {
-				border: 1px solid #ddd; 
-				margin: 25px 50px;
-			}
 			.file {
-				padding: 4px 56px;
-				margin: 2px 0;
+				padding: 5px;
 				border-bottom: 1px solid #ddd;
+			}
+			.file:last-child {
+				border-bottom: none;
 			}
 		`}</style>
 		{ Object.keys(tree).map( file => <div class="file"> {file} </div> ) }
 	</div>;
-}
+};
+
+const readme = ({ tree }) => {
+	const readme = Object.keys(tree).find( name => name.match(/readme\.md$/i) );
+	if(typeof readme == 'undefined')
+		return <div> No readme </div>;
+
+	return new Promise( (resolve, reject) => {
+		repo.loadAs('blob', tree[readme].hash, (err, blob) => {
+			if(err) return reject(err);
+
+			remark()
+				.use(html)
+				.process(blob, (err, html) => {
+					if(err) return reject(err);
+
+					resolve(html.contents);
+				});
+		});
+	} );
+};
 
 // Gennerate file view from tree for branch
 Promise
 	.all( heads.map(loadTreeFromBranch) )
 	.then(trees => {
-		trees.forEach( ({ branch_name, tree }) => {
-			savefile( `${branch_name}.html`, <Tree tree={tree} /> );
-		} );
+		const promises = trees
+			.map( ({ branch_name, tree }) => ({ branch_name, tree, promise: readme({tree}) }) )
+			.map( ({ branch_name, tree, promise }) =>
+				promise.then( readme =>
+					savefile( `${branch_name}.html`, <Page>
+						<Tree tree={tree} />
+						<div class="readme">{readme}</div>
+					</Page> )
+				)
+			);
 
-		savefile('index.html', index_page);
-		savefile('dummy.html', dummy_page);
+		promises.push(savefile('index.html', index_page))
 
 		Promise.all(promises).then(() => saveTree(tree));
 	});

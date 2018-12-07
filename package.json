@@ -6,7 +6,8 @@
   "scripts": {
     "build": "babel src -d lib",
     "prepare": "npm run build",
-	 "build:gh-pages": "npm run build && ./bin/meta-git gh-pages"
+    "build:gh-pages": "npm run build && ./bin/meta-git gh-pages",
+	 "build:gh-pages:watch": " fswatch -0 src/ | xargs -0 -n 1 -I {} npm run build:gh-pages {}"
   },
   "author": "",
   "license": "ISC",
@@ -14,7 +15,9 @@
     "express": "^4.16.4",
     "git-node-fs": "^1.0.0",
     "isomorphic-jsx": "^0.2.0",
-    "js-git": "^0.7.8"
+    "js-git": "^0.7.8",
+    "remark": "^10.0.1",
+    "remark-html": "^9.0.0"
   },
   "bin": {
     "meta-git": "./bin/meta-git",
